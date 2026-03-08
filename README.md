@@ -80,3 +80,5 @@ AnimeVidaa/
 - Caché de API (5 min)
 - Rate limiting
 - Lazy loading de imágenes
+
+- Se creo un motor nombrado como "Anim", encargado de realizar todo el proceso de extraccion y procesamiento de datos diseñado para ser portado a otras plataformas con puertas de instalación disponible.
