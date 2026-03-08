@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="referrer" content="unsafe-url">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Anim - Tu Anime Web App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+
+  <!-- HLS.js for Phase 4 Playback -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="logo">Anim<span>.</span></div>
+    <div class="nav-links">
+      <a href="#home" class="active" data-view="home">Inicio</a>
+      <a href="#catalog" data-view="catalog">Catálogo</a>
+      <a href="#search" data-view="search">Buscar</a>
+    </div>
+  </nav>
+
+  <main id="app-content">
+
+    <!-- Inicio View -->
+    <section id="view-home" class="view active">
+      <div class="hero">
+        <div class="hero-content">
+          <h1>Bienvenido a Anim</h1>
+          <p>Disfruta del mejor anime con reproducción nativa sin bloqueos.</p>
+        </div>
+      </div>
+
+      <div class="content-row">
+        <h2>🔥 Últimos Episodios</h2>
+        <div class="grid" id="grid-latest"></div>
+      </div>
+      <div class="content-row">
+        <h2>📺 En Emisión</h2>
+        <div class="grid" id="grid-weekly"></div>
+      </div>
+    </section>
+
+    <!-- Catálogo View -->
+    <section id="view-catalog" class="view">
+      <div class="content-row">
+        <h2>📚 Catálogo Completo</h2>
+        <div class="grid" id="grid-catalog"></div>
+      </div>
+    </section>
+
+    <!-- Buscar View -->
+    <section id="view-search" class="view">
+      <div class="content-row">
+        <h2>🔍 Buscar</h2>
+        <input type="text" id="search-input" placeholder="Nombre del anime..." class="search-input">
+        <div class="grid" id="grid-search"></div>
+      </div>
+    </section>
+
+    <!-- Detalle View -->
+    <section id="view-detail" class="view">
+      <div class="detail-container">
+        <div class="detail-header">
+          <img id="detail-cover" src="" alt="Cover">
+          <div class="detail-info">
+            <h1 id="detail-title"></h1>
+            <p id="detail-synopsis"></p>
+            <div id="detail-genres" class="genres"></div>
+          </div>
+        </div>
+        <div class="episodes-list">
+          <h2>Episodios</h2>
+          <div id="episodes-grid" class="grid-episodes"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reproductor View (Phase 4) -->
+    <section id="view-player" class="view">
+      <div class="player-wrapper">
+        <button id="close-player" class="btn-close">✖ Volver</button>
+        <div id="server-selector" class="server-selector">
+          <!-- Opciones de servidores dinámicas -->
+        </div>
+        <video id="html5-player" controls preload="auto"></video>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/player.js"></script>
+</body>
+
+</html>

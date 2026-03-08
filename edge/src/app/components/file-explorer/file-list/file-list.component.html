@@ -1,0 +1,132 @@
+<div class="flex flex-col h-full">
+  <!-- Header with Auto-Scroll Toggle -->
+  <div
+    *ngIf="results.length > 0"
+    class="flex items-center justify-between px-4 py-2 border-b border-gray-700 bg-gray-800"
+  >
+    <div class="text-sm text-gray-300 font-medium">
+      Files ({{ results.length }})
+    </div>
+    <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer">
+      <input
+        type="checkbox"
+        [checked]="autoScrollEnabled"
+        (change)="toggleAutoScroll()"
+        class="w-4 h-4 cursor-pointer"
+      />
+      <span>Auto-Scroll</span>
+    </label>
+  </div>
+
+  <div
+    *ngIf="results.length === 0"
+    class="flex-1 flex flex-col items-center justify-center text-gray-500"
+  >
+    <div class="text-6xl mb-4">📂</div>
+    <p class="text-sm">No files to display</p>
+  </div>
+
+  <div
+    *ngIf="results.length > 0"
+    #scrollContainer
+    class="flex-1 min-h-0 overflow-y-auto"
+  >
+    <div
+      *ngFor="let result of results"
+      [attr.data-path]="result.path"
+      class="flex items-start gap-2 px-4 py-2 border-b border-gray-700 hover:bg-customGray cursor-pointer transition-colors"
+      [class.bg-customGray]="selectedFile === result"
+      [class.border-l-4]="selectedFile === result"
+      [class.border-l-orange-500]="selectedFile === result"
+      (click)="selectFile(result)"
+      (keyup.enter)="selectFile(result)"
+      (keyup.space)="selectFile(result)"
+      tabindex="0"
+      role="button"
+    >
+      <span class="text-xl flex-shrink-0">{{ getFileIcon(result) }}</span>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm text-gray-200 break-all">{{ result.path }}</div>
+        <div
+          class="flex items-center gap-2 text-xs text-gray-400 mt-0.5 flex-wrap"
+        >
+          <!-- Status Badge -->
+          <span
+            class="px-1.5 py-0.5 rounded font-medium"
+            [ngClass]="{
+              'bg-green-900 text-green-300': result.status === 'success',
+              'bg-orange-900 text-orange-300':
+                result.status === 'access-denied' ||
+                result.status === 'not-found',
+              'bg-red-900 text-red-300': result.status === 'error'
+            }"
+            >{{ result.status }}</span
+          >
+
+          <!-- Discovery Method Icon -->
+          <span
+            class="px-1.5 py-0.5 rounded text-xs font-medium"
+            [ngClass]="{
+              'bg-blue-900 text-blue-300':
+                result.discoveryMethod === 'known-list',
+              'bg-purple-900 text-purple-300':
+                result.discoveryMethod === 'extracted',
+              'bg-orange-900 text-orange-300':
+                result.discoveryMethod === 'generated'
+            }"
+            [title]="
+              result.discoveryMethod === 'known-list'
+                ? 'Explicitly configured'
+                : result.discoveryMethod === 'extracted'
+                ? 'Extracted from file content'
+                : 'Generated from template'
+            "
+          >
+            {{ getDiscoveryIcon(result.discoveryMethod) }}
+          </span>
+
+          <!-- File Details -->
+          <span *ngIf="result.status === 'success'">
+            • {{ result.isBinary ? 'Binary' : 'Text' }} •
+            {{ formatSize(result.size) }}
+          </span>
+
+          <!-- TV Processing Time -->
+          <span
+            *ngIf="result.tvProcessingTimeMs !== undefined"
+            class="px-1.5 py-0.5 rounded text-xs font-medium"
+            [ngClass]="{
+              'bg-green-900 text-green-300': result.tvProcessingTimeMs < 100,
+              'bg-yellow-900 text-yellow-300':
+                result.tvProcessingTimeMs >= 100 &&
+                result.tvProcessingTimeMs < 1000,
+              'bg-orange-900 text-orange-300':
+                result.tvProcessingTimeMs >= 1000 &&
+                result.tvProcessingTimeMs < 5000,
+              'bg-red-900 text-red-300': result.tvProcessingTimeMs >= 5000
+            }"
+            [title]="'TV processing time: ' + result.tvProcessingTimeMs + 'ms'"
+          >
+            ⏱️ {{ result.tvProcessingTimeMs }}ms
+          </span>
+
+          <!-- Extracted Paths Count -->
+          <span *ngIf="result.extractedPaths.length > 0">
+            • 🔗 {{ result.extractedPaths.length }} paths
+          </span>
+
+          <!-- Discovered From (Clickable Badge) -->
+          <button
+            *ngIf="result.discoveredFrom"
+            class="px-2 py-0.5 rounded text-xs font-medium bg-purple-900 text-purple-300 hover:bg-purple-800 transition-colors border-none cursor-pointer"
+            (click)="selectSourceFile(result.discoveredFrom, $event)"
+            [title]="'Click to view source: ' + result.discoveredFrom"
+            type="button"
+          >
+            📍 {{ getShortSourceName(result.discoveredFrom) }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

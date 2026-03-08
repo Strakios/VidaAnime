@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description"
+    content="VidaAnime - Tu plataforma de anime para Smart TV. Mira anime en línea con la mejor experiencia visual.">
+  <title>VidaAnime - Anime Smart TV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css?v=43">
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+  <!-- Smart TV Auto-Scaler -->
+  <script>
+    function scaleApp() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      var scale = Math.min(w / 1920, h / 1080);
+      document.documentElement.style.setProperty('--app-scale', scale);
+      document.documentElement.style.overflow = 'hidden';
+      document.documentElement.style.width = '100vw';
+      document.documentElement.style.height = '100vh';
+      document.documentElement.style.backgroundColor = '#000';
+
+      // We will apply the transform to the body in CSS
+    }
+    window.addEventListener('resize', scaleApp);
+    document.addEventListener('DOMContentLoaded', scaleApp);
+    scaleApp(); // run immediately
+  </script>
+</head>
+
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="loading-screen">
+    <div class="loader-content">
+      <div class="loader-logo">VIDA<span>ANIME</span></div>
+      <div class="loader-spinner"></div>
+    </div>
+  </div>
+
+  <!-- Pairing Screen Overlay -->
+  <div id="pairing-screen" class="pairing-screen hidden">
+    <div class="pairing-content">
+      <h2>Sincronizar Panel de Control</h2>
+      <p>Para cargar tu progreso y favoritos entra desde tu celular a:</p>
+      <h3 style="color:#66fcf1;letter-spacing:1px;margin:15px 0;">TU-IP:3000/link.html</h3>
+      <p>E ingresa el siguiente código:</p>
+      <div id="pairing-code" class="pairing-code">------</div>
+      <p class="pairing-tip" style="color:yellow;margin-top:10px;">Esperando vinculación con tu cuenta de Google...</p>
+      <button id="skip-pairing-btn" class="focusable skip-btn"
+        style="margin-top:20px;padding:10px 20px;background:#334;color:white;border:none;border-radius:4px;cursor:pointer;">Omitir
+        este paso</button>
+    </div>
+  </div>
+
+  <!-- Navbar -->
+  <nav id="navbar" class="navbar">
+    <div class="nav-brand">VIDA<span>ANIME</span></div>
+    <div class="nav-links">
+      <a href="#home" class="nav-link focusable active" data-section="home" tabindex="0">Inicio</a>
+      <a href="#schedule" class="nav-link focusable" data-section="schedule" tabindex="0">Semanal</a>
+      <a href="#catalog" class="nav-link focusable" data-section="catalog" tabindex="0">Catálogo</a>
+      <a href="#search" class="nav-link focusable" data-section="search" tabindex="0">Buscar</a>
+      <a href="#favorites" class="nav-link focusable" data-section="favorites" tabindex="0">Favoritos</a>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main id="app-content">
+
+    <!-- HOME Screen -->
+    <section id="screen-home" class="screen active">
+      <!-- Hero Banner -->
+      <div id="hero-banner" class="hero-banner">
+        <div class="hero-overlay"></div>
+        <div class="hero-info">
+          <div class="hero-badge">⭐ Anime del Día</div>
+          <h1 id="hero-title" class="hero-title"></h1>
+          <p id="hero-synopsis" class="hero-synopsis"></p>
+          <div class="hero-actions">
+            <button id="hero-watch-btn" class="btn btn-primary focusable">▶ Ver Ahora</button>
+            <button id="hero-detail-btn" class="btn btn-secondary focusable">ℹ Más Info</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Continue Watching -->
+      <div id="row-continue" class="content-row" style="display:none">
+        <h2 class="row-title">▶ Continuar Viendo</h2>
+        <div class="row-scroll" id="continue-scroll"></div>
+      </div>
+
+      <!-- Latest Episodes -->
+      <div class="content-row">
+        <h2 class="row-title">🔥 Últimos Episodios</h2>
+        <div class="row-scroll" id="latest-scroll"></div>
+      </div>
+
+      <!-- Weekly / On Air -->
+      <div class="content-row">
+        <h2 class="row-title">📺 En Emisión</h2>
+        <div class="row-scroll" id="weekly-scroll"></div>
+      </div>
+
+      <!-- Top Rated -->
+      <div class="content-row">
+        <h2 class="row-title">🏆 Top Ranking</h2>
+        <div class="row-scroll" id="top-scroll"></div>
+      </div>
+    </section>
+
+    <!-- CATALOG Screen -->
+    <section id="screen-catalog" class="screen">
+      <div class="section-header">
+        <h1 class="section-title">📚 Catálogo Completo</h1>
+        <div class="catalog-controls">
+          <button class="btn btn-sm focusable catalog-order active" data-order="default">Predeterminado</button>
+          <button class="btn btn-sm focusable catalog-order" data-order="rating">Rating</button>
+          <button class="btn btn-sm focusable catalog-order" data-order="title">Título</button>
+          <button class="btn btn-sm focusable catalog-order" data-order="updated">Actualizados</button>
+        </div>
+      </div>
+      <div class="grid-container" id="catalog-grid"></div>
+      <div class="pagination" id="catalog-pagination"></div>
+    </section>
+
+    <!-- SEARCH Screen -->
+    <section id="screen-search" class="screen">
+      <div class="section-header">
+        <h1 class="section-title">🔍 Buscar Anime</h1>
+      </div>
+      <div class="search-container">
+        <input type="text" id="search-input" class="search-input focusable"
+          placeholder="Escribe el nombre del anime...">
+      </div>
+      <div class="grid-container" id="search-grid"></div>
+      <div id="search-empty" class="empty-state" style="display:none">
+        <div class="empty-icon">🔍</div>
+        <p>Usa el teclado para buscar tu anime favorito</p>
+      </div>
+    </section>
+
+    <!-- FAVORITES Screen -->
+    <section id="screen-favorites" class="screen">
+      <div class="section-header">
+        <h1 class="section-title">❤️ Mis Favoritos</h1>
+      </div>
+      <div class="grid-container" id="favorites-grid"></div>
+      <div id="favorites-empty" class="empty-state" style="display:none">
+        <div class="empty-icon">❤️</div>
+        <p>Aún no tienes favoritos. Explora el catálogo y agrega los que te gusten.</p>
+      </div>
+    </section>
+
+    <!-- SCHEDULE Screen -->
+    <section id="screen-schedule" class="screen">
+      <div class="section-header">
+        <h1 class="section-title">📅 Programación Semanal</h1>
+      </div>
+      <div class="schedule-tabs" id="schedule-tabs"></div>
+      <div class="schedule-content" id="schedule-content"></div>
+    </section>
+
+    <!-- DETAIL Screen -->
+    <section id="screen-detail" class="screen">
+      <div class="detail-backdrop" id="detail-backdrop"></div>
+      <div class="detail-overlay"></div>
+      <div class="detail-content">
+        <div class="detail-header">
+          <img id="detail-cover" class="detail-cover" src="" alt="">
+          <div class="detail-meta">
+            <h1 id="detail-title" class="detail-title"></h1>
+            <div class="detail-badges">
+              <span id="detail-rating" class="badge badge-rating"></span>
+              <span id="detail-type" class="badge badge-type"></span>
+              <span id="detail-status" class="badge badge-status"></span>
+            </div>
+            <div id="detail-genres" class="detail-genres"></div>
+            <p id="detail-synopsis" class="detail-synopsis"></p>
+            <div class="detail-actions">
+              <button id="detail-fav-btn" class="btn btn-secondary focusable">❤️ Favorito</button>
+            </div>
+          </div>
+        </div>
+        <!-- Episodes List -->
+        <div class="episodes-section">
+          <h2 class="row-title">Episodios</h2>
+          <div class="episodes-controls">
+            <button id="ep-sort-asc" class="btn btn-sm focusable active">Ascendente</button>
+            <button id="ep-sort-desc" class="btn btn-sm focusable">Descendente</button>
+          </div>
+          <div class="episodes-grid" id="episodes-grid"></div>
+          <div class="episodes-pagination" id="episodes-pagination"></div>
+        </div>
+        <!-- Related -->
+        <div id="related-section" class="content-row" style="display:none">
+          <h2 class="row-title">Relacionados</h2>
+          <div class="row-scroll" id="related-scroll"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLAYER Screen -->
+    <section id="screen-player" class="screen">
+      <div class="player-container">
+        <div class="player-frame-wrapper" id="player-wrapper">
+          <video id="player-video" class="player-video"
+            style="display:none; width:100%; height:100%; object-fit: contain; position: absolute; top:0; left:0;"></video>
+          <iframe id="player-iframe" class="player-iframe"
+            allow="autoplay; fullscreen; picture-in-picture; encrypted-media; accelerometer; gyroscope" allowfullscreen
+            frameborder="0"></iframe>
+
+          <!-- Virtual Cursor -->
+          <div id="virtual-cursor" class="virtual-cursor"></div>
+
+
+          <!-- TV Player Overlay Controls (Netflix Style) -->
+          <div id="player-overlay" class="player-overlay">
+
+            <div class="player-overlay-top">
+              <button id="player-back" class="player-btn focusable" tabindex="0">
+                <i class="fas fa-arrow-left"></i> Volver
+              </button>
+              <div class="player-info-center">
+                <h1 id="player-overlay-title" class="player-overlay-title"></h1>
+                <span id="player-overlay-ep" class="player-overlay-ep"></span>
+              </div>
+              <button id="player-server-toggle" class="player-btn focusable" tabindex="0">🌐 Servidores</button>
+            </div>
+
+            <div id="player-servers" class="player-servers" style="display:none"></div>
+
+            <div class="player-overlay-center">
+              <div id="player-center-icon" class="player-center-icon">
+                <i class="fas fa-play"></i>
+              </div>
+            </div>
+
+            <div class="player-overlay-bottom">
+              <div class="player-progress-container">
+                <span id="player-time-current">00:00</span>
+                <div id="player-progress-bar" class="player-progress-bar">
+                  <div id="player-progress-fill" class="player-progress-fill"></div>
+                  <div id="player-progress-handle" class="player-progress-handle"></div>
+                </div>
+                <span id="player-time-total">00:00</span>
+              </div>
+
+              <div class="player-bottom-controls">
+                <div class="control-group">
+                  <button id="player-prev" class="player-control-btn focusable" title="Anterior">
+                    <i class="fas fa-step-backward"></i>
+                  </button>
+                  <button id="player-rewind" class="player-control-btn focusable" title="Retroceder 10s">
+                    <i class="fas fa-backward"></i>
+                  </button>
+                  <button id="player-play-btn" class="player-control-btn focusable" title="Play/Pause">
+                    <i class="fas fa-play"></i>
+                  </button>
+                  <button id="player-forward" class="player-control-btn focusable" title="Adelantar 10s">
+                    <i class="fas fa-forward"></i>
+                  </button>
+                  <button id="player-next" class="player-control-btn focusable" title="Siguiente">
+                    <i class="fas fa-step-forward"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="/js/navigation.js?v=54"></script>
+  <script src="/js/player.js?v=54"></script>
+  <script src="/js/app.js?v=54"></script>
+</body>
+
+</html>
